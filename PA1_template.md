@@ -1,16 +1,8 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-author: "Apoorv Saraf"
-date: "27 October 2016"
-output:
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
+Apoorv Saraf  
+27 October 2016  
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-options(scipen = 1, digits = 2)
-```
+
 
 ## Introduction
 
@@ -24,7 +16,8 @@ The data for this assignment can be downloaded from the course web site:
 
 2.Read data into data frame 'dat'.
 
-```{r data}
+
+```r
 fileUrl <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 download.file(fileUrl,destfile = "Activity monitoring data.zip")
 
@@ -41,17 +34,22 @@ dat <- read.csv("./Activity monitoring data/activity.csv")
 
 3.Calculate and report the mean and median of the total number of steps taken per day
 
-```{r}
+
+```r
 StepsPerDay <- aggregate(steps~date,dat,sum) 
 
 hist(StepsPerDay$steps,main = "Histogram - Total number of steps taken each day",
      xlab = "Total No of Steps", ylab = "Frequency(No of Days)")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+
+```r
 MeanSteps <- mean(StepsPerDay$steps, na.rm = TRUE)
 MedianSteps <- median(StepsPerDay$steps, na.rm=TRUE)
 ```
 
-**The mean is `r MeanSteps` and median is `r MedianSteps`**
+**The mean is 10766.19 and median is 10765**
 
 ## What is the average daily activity pattern?
 
@@ -61,17 +59,22 @@ MedianSteps <- median(StepsPerDay$steps, na.rm=TRUE)
 
 3.Find interval containing the maximum number of steps.
 
-```{r}
+
+```r
 MeanStepsPerInterval <- aggregate(steps~interval,dat,mean)
 
 plot(MeanStepsPerInterval$interval,MeanStepsPerInterval$steps,type = "l",
      main = "Time series plot of the average number of steps ",
      xlab = "Interval", ylab = " Average number of steps")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 MaxStepInterval <- MeanStepsPerInterval$interval[which.max(MeanStepsPerInterval$steps)]
 ```
 
-**The 5-minute interval containing the maximum number of steps is `r MaxStepInterval`**
+**The 5-minute interval containing the maximum number of steps is 835**
 
 ##Imputing missing values
 
@@ -89,7 +92,8 @@ MaxStepInterval <- MeanStepsPerInterval$interval[which.max(MeanStepsPerInterval$
 
 7.Assess the impact of imputing missing data on the estimates of the total daily number of steps
 
-```{r}
+
+```r
 IncompleteDat<- sum(!complete.cases(dat))
 
 NewDat <- merge(dat, MeanStepsPerInterval, by="interval")
@@ -101,7 +105,11 @@ hist(NewStepsPerDay$steps.x,col="red",main = "Histogram - Total number of steps 
      xlab = "Total No of Steps", ylab = "Frequency(No of Days)")
 hist(StepsPerDay$steps,col="blue",add=TRUE)
 legend("topright", c("Imputed Data", "Original Data"), col=c("red", "blue"),lwd=6,bty = "n")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 NewMean <- mean(NewStepsPerDay$steps.x)
 NewMedian <- median(NewStepsPerDay$steps.x)
 
@@ -109,11 +117,11 @@ DiffMean <- NewMean - MeanSteps
 DiffMedian <- NewMedian - MedianSteps
 ```
 
-**The total no of missing values in the dataset are `r IncompleteDat`**
+**The total no of missing values in the dataset are 2304**
 
-**For imputed data the mean is `r MeanSteps` and median is `r MedianSteps`**
+**For imputed data the mean is 10766.19 and median is 10765**
 
-**The diffrence in mean and median of original and imputed data is `r DiffMean` and `r DiffMedian` repectively.**
+**The diffrence in mean and median of original and imputed data is 0 and 1.19 repectively.**
 
 **As observed from the above histogarm, imputed data has higher frequency in 10000 - 150000 step range.**
 
@@ -123,7 +131,8 @@ DiffMedian <- NewMedian - MedianSteps
 
 2.Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 
-```{r,fig.width = 6, fig.height = 6}
+
+```r
 type <- function(date) {
   if (weekdays(as.Date(date)) %in% c("Saturday", "Sunday")) {"weekend"} 
   else {"weekday"}
@@ -143,3 +152,6 @@ plot(WeekendStepsInterval$interval,WeekendStepsInterval$steps.x,type = "l",
 plot(WeekdayStepsInterval$interval,WeekdayStepsInterval$steps.x,type = "l",
      main = "Weekday ",
      xlab = "Interval", ylab = " Steps")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
